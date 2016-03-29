@@ -1,0 +1,35 @@
+# Copyright 2014 Square Inc.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+
+$(window).ready ->
+  $(".datepicker").datepicker(autoclose: true)
+
+  translationSearchForm = $('#translation-search-form')
+  prefillForm = ->
+    translationSearchForm.find('[name]')
+      .not('meta')
+      .not('[type=hidden]')
+      .not('[type=submit]').each (i, elt) ->
+        prefillVal = $.url().param( $(elt).attr('name') )
+        if $(elt).is('select') and !prefillVal
+          $(elt).prop('selectedIndex', 0)
+        else
+          $(elt).val(prefillVal)
+
+  prefillForm()
+
+#  TODO: Use Select2 instead
+
+  $('select[name="translator_id"]').chosen
+    width: "100%"

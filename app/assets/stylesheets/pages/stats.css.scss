@@ -1,0 +1,28 @@
+@import "base/vars";
+@import "css3-mixins";
+
+body.stats {
+  .nvtooltip h6 {
+    font-weight: bold;
+    text-align: center;
+    padding: 4px 14px 0px 14px;
+    margin-bottom: 0;
+  }
+
+  .stats-table {
+    table-layout: fixed;
+    margin: 40px 0px;
+    th {
+      text-align: center;
+      color: $gray4;
+      font-weight: 300;
+      letter-spacing: 1px;
+      h1 {
+        font-weight: 100;
+        font-size: 60px;
+        color: $dark-blue; //#c5e2ff
+        line-height: 50px;
+      }
+    }
+  }
+}

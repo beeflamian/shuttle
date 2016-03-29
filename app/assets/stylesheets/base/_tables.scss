@@ -1,0 +1,81 @@
+@import "base/vars";
+@import "css3-mixins";
+
+.filter-bar {
+  padding: 15px 10px;
+  background-color: $off-blue;
+  border-bottom: 1px solid $gray5;
+  z-index: 9999;
+
+  .checkbox { display: inline; }
+
+  .checkbox + .checkbox, input + .checkbox { margin-left: 15px; }
+  input + input, input + select, select + input, select + select { margin-left: 15px; }
+
+  .main {
+
+  }
+
+  .collapse {
+    margin-top: 30px;
+    margin-left: 40px;
+    display: none;
+
+    .controls {
+      width: 480px;
+      input, select, .twitter-typeahead { width: 100%; }
+    }
+  }
+
+  .expand-search {
+    margin-top: 3px;
+    margin-right: 10px;
+    font-weight: 500;
+    font-size: 30px;
+    opacity: 0.6;
+    @include transition(all, 0.3s, ease);
+    &:hover {
+      cursor: pointer;
+      color: $dark-blue;
+      opacity: 1.0;
+    }
+    &.active {
+      color: $dark-blue;
+      @include transform(rotate(90deg));
+    }
+  }
+}
+
+table.table {
+  width: 100%;
+
+  &.hover-rows {
+    tbody > tr:hover {
+      cursor: pointer;
+      background-color: $off-blue;
+    }
+  }
+
+  thead {
+    tr {
+      text-align: left;
+      font-weight: bold;
+      text-transform: uppercase;
+      th {
+        padding: 15px 10px;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      &:nth-child(odd) {
+        background-color: $gray6;
+      }
+
+      td {
+        padding: 10px;
+      }
+    }
+  }
+}

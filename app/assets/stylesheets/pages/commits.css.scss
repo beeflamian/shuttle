@@ -1,0 +1,135 @@
+@import "base/vars";
+@import "css3-mixins";
+
+body.commits { 
+  .header h6 {
+    color: $gray4;
+    text-transform: uppercase;
+    margin-left: 30px;
+    line-height: 10px;
+    margin-top: 0px;
+    span.separator {
+      color: $input-red;
+    }
+  }
+
+  .control-group label.info {
+    padding-top: 0;
+  }
+
+  .form-action { margin-top: 40px; }
+
+  .filter-bar {
+    display: flex;
+
+    form > * {
+      margin-right: 15px;
+      margin-left: 0px;
+    }
+
+    input[type="text"] { width: 350px; }
+    input[type="checkbox"] { margin-left: 30px; }
+    #locales { width: 300px; }
+  }
+
+  .dropzone {
+    min-height: 300px;
+    &:not(.dz-started) .dz-message {
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      flex-direction: column;
+      text-align: center;
+      strong {
+        text-transform: uppercase;
+        margin-bottom: 5px;
+      }
+    }
+  }
+
+  #screenshot-gallery {
+    display: flex;
+    justify-content: center;
+  }
+
+  table#translations {
+    table-layout: fixed;
+
+    thead {
+      tr {
+        text-align: left;
+        font-weight: bold;
+        text-transform: uppercase;
+
+        th {
+          padding: 15px 10px;
+          &.text-success {
+            color: #468847;
+          }
+
+          &:first-child { 
+            padding-left: 20px; 
+            width: 50%;
+          }
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        &:nth-child(odd) {
+          background-color: $gray6;
+        }
+
+        a { text-decoration: underline; }
+
+        td {
+          padding: 7px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          &:first-child { 
+            padding-left: 20px; 
+          }
+
+          .muted { 
+            color: $gray3;
+          }
+
+          .text-success{
+            color: #468847;
+          }
+        }
+      }
+    }
+  }
+
+  p.loading-more {
+    margin-top: 40px;
+    text-align: center;
+  }
+}
+
+#issues-tab {
+  legend { margin-bottom: 20px; }
+  .no-issues-found { text-align: center; }
+  table.issues tbody {
+    .source-copy { max-width: 180px; }
+    .status { width: 72px; }
+    .priority { width: 120px; }
+    .kind { width: 132px; }
+    .summary { max-width: 180px; }
+  }
+
+  dl.issues-stats {
+    max-width: 230px;
+    .dhead {
+      border-bottom: 1px solid $gray5;
+    }
+
+    dt, dd {
+      display: inline-block;
+      min-width: 100px;
+    }
+  }
+}

@@ -1,0 +1,43 @@
+@import "base/vars";
+@import "css3-mixins";
+@import "partials/_pagination";
+
+body.search {
+  .filter-bar {
+    select { text-transform: capitalize; }
+
+    .main {
+      input[type="text"] { width: 865px; }
+      select {width: 150px; }
+    }
+  }
+
+  &#search-translations {
+    .main > input[type="text"] { width: 535px; }
+    .translation-entry { word-break: break-word; }
+    .key {
+      word-break: break-word;
+      width: 150px;
+    }
+  }
+
+  &#search-keys {
+    .main > input[type="text"] { width: 700px; }
+  }
+
+  &#search-keys {
+    table {
+      table-layout: fixed;
+      th:nth-child(1) {
+        width: 90px;
+      } 
+      th:nth-child(2) {
+        width: 450px;
+      }
+      a {
+        text-decoration: underline;
+      }
+    }
+  }
+  table a { text-decoration: underline; }
+}

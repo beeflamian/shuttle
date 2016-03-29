@@ -1,0 +1,68 @@
+# Copyright 2014 Square Inc.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+
+$(document).ready ->
+  find_fuzzy_matches = (source_copy, locale) ->
+    loadFuzzyMatches($('.fuzzy-matches').first(),
+                     copy_field,
+                     "<%= fuzzy_match_project_key_translation_url(@translation.key.project, @translation.key, @translation, format: 'json') %>",
+                     source_copy)
+
+  source_copy = "<%= escape_javascript @translation.source_copy %>"
+  target_locale = "<%= escape_javascript @translation.rfc5646_locale %>"
+
+  current_selection = source_copy
+
+  blankString = $("input[name=blank_string]")
+  copy_field = $("#translation_copy")
+  source_copy_field = $("#source_copy")
+
+  blankString.checked = true  if copy_field.val().match(/^\s*$/)
+  blankString.change ->
+    $("#translation_copy").val ""  if blankString[0].checked
+
+  copy_field.keyup ->
+    blankString[0].checked = copy_field.val().match(/^\s*$/)
+    true
+  $(".copy-source").click ->
+    copy_field.val "<%= escape_javascript @translation.source_copy %>"
+    false
+
+  source_copy_field.click ->
+    selection_string = window.getSelection().toString()
+
+    if selection_string.length > 0 and selection_string != current_selection
+      current_selection = selection_string
+      source_copy_field.removeHighlight()
+      source_copy_field.highlight(current_selection)
+      find_fuzzy_matches(current_selection, target_locale)
+
+  $(".history-entry").click (e) ->
+    $.each( $(this).find(".change.copy > .change-state"), (i, elt) ->
+      if $(this).hasClass("full")
+        $(this).fadeOut( () ->
+          $(this).text( $(this).data("compact"))
+                 .removeClass("full")
+                 .fadeIn()
+        )
+      else
+        $(this).fadeOut( () ->
+          $(this).text( $(this).data("full") )
+                 .addClass("full")
+                 .fadeIn()
+        )
+    )
+
+  find_fuzzy_matches(source_copy, target_locale)
+

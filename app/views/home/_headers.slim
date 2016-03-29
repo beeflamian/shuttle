@@ -1,0 +1,75 @@
+/ Copyright 2014 Square Inc.
+/
+/    Licensed under the Apache License, Version 2.0 (the "License");
+/    you may not use this file except in compliance with the License.
+/    You may obtain a copy of the License at
+/
+/        http://www.apache.org/licenses/LICENSE-2.0
+/
+/    Unless required by applicable law or agreed to in writing, software
+/    distributed under the License is distributed on an "AS IS" BASIS,
+/    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/    See the License for the specific language governing permissions and
+/    limitations under the License.
+
+/ Requires the following local variables:
+/   - `item_type`. Can be 'commit' or 'article'.
+
+tr
+  / Project Status
+  th
+  th Project
+  th = item_type == 'commit' ? 'SHA' : 'Name'
+  / Create Date
+  th
+    - if @form[:sort__field] == 'create'
+      - if @form[:sort__direction] == 'asc'
+        = link_to request.parameters.merge({:sort__field => 'create', :sort__direction => 'desc'}) do
+          | Created &nbsp;
+          i.fa.fa-caret-down
+      - else
+        = link_to request.parameters.merge({:sort__field => 'create', :sort__direction => 'asc'}) do
+          | Created &nbsp;
+          i.fa.fa-caret-up
+    - else
+      = link_to 'Created', request.parameters.except(:sort__direction).merge(:sort__field => 'create')
+  / Due Date
+  th
+    - if @form[:sort__field] == 'due'
+      - if @form[:sort__direction] == 'desc'
+        = link_to request.parameters.merge({:sort__field => 'due', :sort__direction => 'asc'}) do
+          | Due Date&nbsp;
+          i.fa.fa-caret-up
+      - else
+        = link_to request.parameters.merge({:sort__field => 'due', :sort__direction => 'desc'}) do
+          | Due Date&nbsp;
+          i.fa.fa-caret-down
+    - else
+      = link_to 'Due Date', request.parameters.except(:sort__direction).merge(:sort__field => 'due')
+  / Priority
+  th
+    - if @form[:sort__field] == 'priority' || @form[:sort__field].nil?
+      - if @form[:sort__direction] == 'desc'
+        = link_to request.parameters.merge({:sort__field => 'priority', :sort__direction => 'asc'}) do
+          | Priority &nbsp;
+          i.fa.fa-caret-up
+      - else
+        = link_to request.parameters.merge({:sort__field => 'priority', :sort__direction => 'desc'}) do
+          | Priority &nbsp;
+          i.fa.fa-caret-down
+
+    - else
+      = link_to 'Priority', request.parameters.except(:sort__direction).merge(:sort__field => 'priority')
+
+  th Description
+
+  - if current_user.translator?
+    th Translate
+    th Review
+
+  - else
+    th Progress
+
+  / Translation/Monitor Button
+  - if current_user.translator? or current_user.monitor?
+    th

@@ -1,0 +1,113 @@
+# Copyright 2014 Square Inc.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+
+$(window).ready () ->
+  commit_load_chart = d3.select('#commit_load_chart').style('height', '350px')
+  word_distribution_chart = d3.select('#word_distribution_chart').style('height', '350px')
+  translation_language_chart = d3.select('#translation_language_chart').style('height', '400px')
+
+  # GENERATE GRAPHS
+  generatePieChart = (d3element, data) ->
+    nv.addGraph ->
+      chart = nv.models.pieChart()
+      .x( (d) -> d.key )
+      .y( (d) -> d.y )
+      .donut(true)
+      .showLabels(true)
+      .showLegend(false)
+      .tooltipContent((key, y, e, graph) ->
+        return '<h6>' + key + '</h6>' +
+            '<p>' + numberWithDelimiter(parseFloat(y.replace(",", "")).toFixed()) + ' words </p>'
+      )
+
+      chart.color([ "#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6",
+                    "#6A3D9A"])
+
+      d3element.datum(data).transition().call(chart)
+      nv.utils.windowResize(chart.update)
+      chart
+
+  generateLineBarChart = (d3element, data) ->
+    nv.addGraph ->
+      chart = nv.models.linePlusBarChart().margin(
+        top: 30
+        right: 60
+        bottom: 50
+        left: 70
+      )
+      .x( (d, i) -> i)
+      .useInteractiveGuideline(true)
+      .color(d3.scale.category10().range())
+
+      chart.xAxis.tickFormat((d) ->
+        dx = data[0].values[d] and data[0].values[d].x or 0
+        (if dx then d3.time.format("%x")(new Date(dx)) else "")
+      )
+      .showMaxMin(false)
+
+      chart.y1Axis.tickFormat(d3.format(",d"))
+      chart.y2Axis.tickFormat( (d) -> d3.format(",.2f")(d) )
+
+      d3element.datum(data).transition().call(chart)
+
+      nv.utils.windowResize(chart.update)
+      chart
+
+  generateHorizontalBarChart = (d3element, data) ->
+    nv.addGraph ->
+      chart = nv.models.multiBarHorizontalChart().margin(
+        top: 30
+        right: 50
+        bottom: 50
+        left: 100
+      )
+      .x( (d) -> d.label )
+      .y( (d) -> d.value )
+      .showValues(true)
+      .tooltips(false)
+      .showControls(false)
+      .transitionDuration(350)
+
+      chart.valueFormat(d3.format(',d'))
+      chart.yAxis.tickFormat(d3.format(',d'))
+
+      d3element.datum(data).call(chart)
+      nv.utils.windowResize(chart.update)
+      chart
+
+  generateLineBarChart(commit_load_chart, [
+    {
+      "key"     : "Number of Commits Created",
+      "bar"     : true,
+      "values"  : <%= @num_commits_loaded.to_json %>
+    },
+    {
+      "key"     : "Average Commit Load Time (in minutes)",
+      "values"  : <%= @average_load_time.to_json %>
+    }
+  ])
+
+  generatePieChart(word_distribution_chart, <%= @words_per_project.to_json %>)
+  generateHorizontalBarChart(translation_language_chart, [
+    {
+      "key"     : "Words Created"
+      "color"   : "#d62728"
+      "values"  : <%= @num_words_created_per_language.to_json %>
+    },
+    {
+      "key"     : "Words Completed"
+      "color"   : "#1f77b4"
+      "values"  : <%= @num_words_completed_per_language.to_json %>
+    }
+  ])

@@ -1,0 +1,8 @@
+<%= @comment.user_name %> wrote a new comment on <%= l @comment.created_at, format: :full %>:
+
+<%= @comment.content %>
+
+View the comment & reply to it at <%= comment_url(@comment) %>
+
+Sincerely,
+The Shuttle Automated Mailer

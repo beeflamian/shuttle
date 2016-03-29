@@ -1,0 +1,48 @@
+/ Copyright 2014 Square Inc.
+/
+/    Licensed under the Apache License, Version 2.0 (the "License");
+/    you may not use this file except in compliance with the License.
+/    You may obtain a copy of the License at
+/
+/        http://www.apache.org/licenses/LICENSE-2.0
+/
+/    Unless required by applicable law or agreed to in writing, software
+/    distributed under the License is distributed on an "AS IS" BASIS,
+/    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/    See the License for the specific language governing permissions and
+/    limitations under the License.
+
+- content_for :file_name do
+  = 'views/devise/sessions/passwords/edit'
+- content_for :shuttle_logo do 
+  = image_tag("shuttle_white.png")
+
+ruby:
+  flash.now[:alert] = resource.errors.full_messages.unshift('Errors:') unless resource.errors.empty?
+
+.row.row-modal
+  .three.columns &nbsp;
+  .ten.columns 
+    h1 Change your password
+    p Enter a new password 
+    .body-portion
+      .row.active
+        .three.columns &nbsp;
+        = form_for(resource, url: user_password_path, html: {method: :patch, class: 'four columns greywashed'}) do |f|
+          = f.hidden_field :reset_password_token
+          div
+            = f.password_field :password, placeholder: "Password", required: true
+          div
+            = f.password_field :password_confirmation, placeholder: "Password", required: true
+          div
+            = f.submit "Change my password", class: 'submit sign-in'
+          div 
+            a href="#{new_user_session_path}" Sign in to Shuttle
+
+        .three.columns &nbsp;
+      
+        
+    .footer-portion 
+      .row  
+
+  .three.columns &nbsp;

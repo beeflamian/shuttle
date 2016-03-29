@@ -1,0 +1,135 @@
+// VARS
+$issue-status-red: #FF0000;
+$issue-status-green: #40C20F;
+$issue-status-blue: #66B2FF;
+$issue-status-yellow: #E4DB00;
+
+.issue-status {
+  &.issue-status-1 { color: $issue-status-red; }
+  &.issue-status-2 { color: $issue-status-yellow; }
+  &.issue-status-3 { color: $issue-status-green; }
+  &.issue-status-4 { color: $issue-status-blue; }
+}
+
+#issue-notifications-on-translations-page-header {
+  display:inline-block;
+  float: right;
+  padding-top:10px;
+
+  .has-pending-issues {
+    color: $issue-status-red;
+  }
+}
+
+#issues {
+  padding-top: 30px;
+  margin-top: 70px;
+
+  legend {
+    margin-bottom:30px;
+  }
+
+  .issue-wrapper {
+    padding: 30px 10px;
+
+    .issue-status {
+      padding: 0 5px;
+    }
+
+    .top-bar {
+      border-bottom: 1px solid $gray5;
+      margin-bottom: 15px;
+    }
+
+    .right-side {
+      text-align: right;
+      input[type=submit] {
+        margin: 5px 0;
+        width: 170px;
+      }
+    }
+  }
+
+  .cancel-button {
+    width: 200px;
+    margin-left: 5px;
+  }
+
+  .form-wrapper, .loading-overlayable {
+    position: relative;
+  }
+
+  .comments .cancel-button {
+    width: 100px;
+  }
+
+  .issues-table {
+    border: 1px solid $gray6;
+  }
+
+  .comment {
+    padding:10px;
+    border-top: 1px solid $gray5;
+    .info {
+      font-size: 12px;
+    }
+  }
+
+  .errors {
+    color: $flash-red
+  }
+
+  .info {
+    color: $gray4;
+  }
+
+  button {
+    margin: 0;
+    &.hide {
+      display: none // to take precedence
+    }
+  }
+
+  .control-group {
+    margin-bottom: 5px;
+
+    .controls {
+      min-height: 30px;
+      display: flex;
+    }
+    div.controls {
+      padding-top: 9px;
+    }
+  }
+
+  select {
+    padding-right: 35px;
+  }
+
+  .overlayed {
+    opacity: 0.4;
+  }
+  
+  .loading-overlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+  }
+
+  .issue-subscribed-emails.selectize-control {
+    .selectize-input [data-value] {
+      .email { opacity: 0.7; }
+      .name + .email { margin-left: 5px; }
+      .email:before { content: '<'; }
+      .email:after { content: '>'; }
+    }
+
+    .selectize-dropdown .caption {
+      font-size: 12px;
+      display: block;
+      opacity: 0.5;
+    }
+  }
+}

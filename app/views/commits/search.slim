@@ -1,0 +1,82 @@
+/ Copyright 2014 Square Inc.
+/
+/    Licensed under the Apache License, Version 2.0 (the "License");
+/    you may not use this file except in compliance with the License.
+/    You may obtain a copy of the License at
+/
+/        http://www.apache.org/licenses/LICENSE-2.0
+/
+/    Unless required by applicable law or agreed to in writing, software
+/    distributed under the License is distributed on an "AS IS" BASIS,
+/    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/    See the License for the specific language governing permissions and
+/    limitations under the License.
+
+- content_for :shuttle_title do
+  = "Commit #{@commit.revision_prefix} - Shuttle"
+- content_for :file_name do
+  = 'views/commits/search'
+
+= render layout: 'commits/layout' do
+  fieldset
+    legend Commit Strings
+
+    div
+      .filter-bar#filter
+        = form_tag(search_project_commit_url, method: 'GET', id: 'filter-form', class: 'filter') do
+          = text_field_tag 'filter', '', placeholder: 'Filter by Key', id: 'filter-field'
+          = select_tag 'status', options_for_select(\
+              [\
+                ['All', nil],\
+                ['Approved', 'approved'],\
+                ['Pending', 'pending']\
+              ]\
+            ), id: 'filter-select'
+          - required_locales, not_required_locales = @project.locale_requirements.partition { |locale, required| required }
+          select#locales name="locales[]" multiple="multiple" data-placeholder="Filter by locales"
+            optgroup label="Required"
+              - required_locales.each do |locale, _|
+                option value=locale.rfc5646 = locale.rfc5646
+            optgroup label="Not Required"
+              - not_required_locales.each do |locale, _|
+                option value=locale.rfc5646 = locale.rfc5646
+          = submit_tag 'Filter', class: 'primary'
+
+      .pagination-links
+        = paginate @keys
+      - locales_to_show = @keys_presenter.locales_to_show
+      table.table.table-striped.border#translations data-locales=locales_to_show.keys.map(&:rfc5646)
+        thead
+          tr
+            th STRING
+            - locales_to_show.each do |locale, required|
+              - finished = (@commit.translations_not_done(locale) == 0)
+              th class=(required ? (finished ? 'text-success' : 'text-error') : nil)
+                = locale.rfc5646
+                - if finished
+                  | &nbsp;
+                  i.fa.fa-check-circle
+                - else
+                  | &nbsp;
+                  i.fa.fa-circle-o
+        tbody
+          - @keys.each do |key|
+            tr
+              td
+                = @keys_presenter.original_key(key)
+                br
+                small.muted = @keys_presenter.source(key)
+              - locales_to_show.keys.each do |locale|
+                - translation = @keys_presenter.translation_for_locale(key, locale)
+                - if translation
+                  td
+                    a href=@keys_presenter.translation_url(translation) class=@keys_presenter.translation_class(translation) = @keys_presenter.translation_text(translation)
+                - else
+                  td
+
+    .row
+      .pagination-links
+        = paginate @keys
+    .row
+      .pagination-info
+        = page_entries_info(@keys, entry_name: 'keys')

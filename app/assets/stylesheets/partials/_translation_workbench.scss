@@ -1,0 +1,213 @@
+@import "base/vars";
+@import "css3-mixins";
+
+.translation-workbench {
+  width: 100%;
+  // height: 900px;
+  border-top: none;
+  // overflow-y: scroll;
+
+  .entry {
+    .eight.columns {
+      @include box-sizing;
+
+      &.left {
+        padding: 10px 10px 10px 20px;
+      }
+      &.right {
+        padding: 10px 20px 10px 10px;
+      }
+
+      .translation-side {
+        padding: 10px;
+        min-height: 240px;
+
+        textarea.translation-area {
+          width: 100%;
+          min-height: 150px;
+        }
+
+        textarea.translation-area, .multi-updateable-translations a {
+          &.approved {
+            color: $input-green;
+            font-weight: 500;
+          }
+          &.rejected {
+            color: $input-red;
+            font-weight: 500;
+          }
+          &.translated {
+            color: $input-blue;
+            font-weight: 500;
+          }
+          &.unsaved {
+            color: black;
+          }
+        }
+
+        button.copy-source {
+          margin: 0;
+        }
+
+        .multi-updateable-translations-wrapper {
+          margin: 1px 0 7px 0;
+          display: flex;
+          align-items: center;
+
+          input[type=checkbox] {
+            font-size: 250%;
+
+            &:checked {
+              ::after {
+                border-bottom-width: 2px;
+                border-left-width: 3px;
+              }
+
+              &:disabled::after {
+                border-color: $gray5;
+              }
+            }
+          }
+
+          .copy-to-label {
+            min-width: 55px;
+          }
+
+          .multi-updateable-translations {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+          }
+
+          .multi-updateable-translation {
+            display: flex;
+            align-items: center;
+            margin-left: 5px;
+            margin-right: 15px;
+            width: 90px;
+          }
+
+          a {
+            text-align: center;
+            line-height: 15px;
+
+            .similarity { font-size: small;}
+          }
+        }
+
+        span.controls {
+          float: right;
+        }
+        .notes {
+          display: -moz-box; /* Firefox */
+          display: -webkit-box; /* Safari and Chrome */
+          display: -ms-flexbox; /* Internet Explorer 10 */
+          display: box;
+          -moz-box-orient: horizontal;
+          -webkit-box-orient: horizontal;
+          box-orient: horizontal;
+
+          .half {
+            @include flex;
+            padding: 10px 10px;
+
+            width: 100%;
+            p.glossary-tips {
+              color: $input-blue;
+            }
+            p.warning {
+              color: $input-orange;
+            }
+            p.alert {
+              color: $input-red;
+            }
+            p.token-parity-warning {
+            }
+            p.glossary-tips, p.warning, p.alert {
+              font-size: 12px;
+              font-style: italic;
+              font-weight: 500;
+              line-height: 15px;
+              margin: 5px;
+            }
+          }
+        }
+      }
+
+      .info-side {
+        padding: 10px;
+        min-height: 240px;
+        position: relative;
+
+        background-color: $gray6;
+        p.source-copy {
+          .fenced {
+            color: $input-red;
+          }
+
+          margin-bottom: 30px;
+          white-space: pre-wrap;
+        }
+
+        p.context {
+          margin-left: 30px;
+          margin-bottom: 110px;
+
+        }
+
+        .additional-info {
+          font-size: 80%;
+          color: $gray3;
+
+          .item {
+            &.context {
+              margin-bottom: 10px;
+            }
+
+            &.approved {
+              color: $input-green;
+            }
+            &.rejected {
+              color: $input-red;
+            }
+            &.fuzzy-matches {
+              .match-percentage {
+                color: $input-red;
+              }
+              dd + dd {
+                margin-top: 5px;
+              }
+              .diff {
+                color: $gray2;
+                text-decoration: none !important;
+              }
+              ins {
+                background-color: darken($background-green, 8%);
+                text-decoration: none;
+              }
+
+              del {
+                background-color: darken($background-red, 8%);
+              }
+            }
+
+
+            dt {
+              float: left;
+              width: 100px;
+            }
+            dd {
+              margin: 0px 0px 0px 100px;
+            }
+          }
+        }
+      }
+      &:not(:last-of-type) {
+        .entry-spacer {
+          margin: 0px 20px;
+          border-bottom: 1px solid $gray5;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+<%= @issue.user_name %> reported a new issue on <%= l @issue.created_at, format: :full %>:
+
+Type: <%= t("models.issue.kind")[@issue.kind] %>
+
+Priority: <%= t("models.issue.priority")[@issue.priority] %>
+
+Summary: <%= @issue.summary %>
+
+Description: <%= @issue.description %>
+
+View the issue & add a comment at <%= issue_url(@issue) %>
+
+Sincerely,
+The Shuttle Automated Mailer

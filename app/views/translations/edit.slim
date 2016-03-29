@@ -1,0 +1,74 @@
+/ Copyright 2014 Square Inc.
+/
+/    Licensed under the Apache License, Version 2.0 (the "License");
+/    you may not use this file except in compliance with the License.
+/    You may obtain a copy of the License at
+/
+/        http://www.apache.org/licenses/LICENSE-2.0
+/
+/    Unless required by applicable law or agreed to in writing, software
+/    distributed under the License is distributed on an "AS IS" BASIS,
+/    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/    See the License for the specific language governing permissions and
+/    limitations under the License.
+- content_for :shuttle_title do
+  = "Translation #{@translation.id} - Shuttle"
+- content_for :file_name do
+  = 'views/translations/edit'
+
+/ Status Line
+.header
+  h1
+    | #{@translation.key.project.name}
+    strong &nbsp;>&nbsp;
+    | Translation #{@translation.id}
+  = render partial: 'issues/notifications_on_translation_page_header', locals: { issues: @issues }
+
+
+hr.divider
+
+/ Filter Bar
+= form_for @translation, url: project_key_translation_url(@project, @key, @translation), html: {id: 'large-translation'} do |f|
+  .entry.row
+    / Edit Side
+    .eight.columns.edit-side
+      fieldset
+        legend = @translation.locale.name
+
+        .control-group
+          = f.text_area :copy, autocomplete: 'off', rows: 15, class: 'resize'
+
+        .control-group
+          = check_box_tag 'blank_string', '1', (@translation.translated? && @translation.copy.blank? ? 'checked' : nil)
+          | The translation is a blank string
+
+        .control-group
+          .fuzzy-matches
+
+      fieldset
+        legend Notes
+
+        .control-group
+          = f.text_area :notes, autocomplete: 'off', rows: 7, class: 'resize'
+
+      .form-actions
+        = f.submit class: 'primary', value: 'Save'
+            
+        
+
+    / Information Side
+    .eight.columns.info-side
+      button.small.default.copy-source Copy to #{@translation.locale.name}
+      fieldset 
+        legend = @translation.source_locale.name
+
+        .control-group
+          #source_copy.well.seven.columns
+            span.highlight
+              = @translation.source_copy
+
+      = render partial: 'details', locals: { translation: @translation }
+      = render partial: 'translation_history', locals: { translation: @translation }
+      = render partial: (@translation.belongs_to_article? ? 'article_details' : 'commit_history'), locals: { translation: @translation }
+
+= render partial: 'issues/index', locals: {project: @project, key: @key, translation: @translation, issues: @issues, issue: @issue}

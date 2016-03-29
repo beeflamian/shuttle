@@ -1,0 +1,52 @@
+/ Copyright 2014 Square Inc.
+/
+/    Licensed under the Apache License, Version 2.0 (the "License");
+/    you may not use this file except in compliance with the License.
+/    You may obtain a copy of the License at
+/
+/        http://www.apache.org/licenses/LICENSE-2.0
+/
+/    Unless required by applicable law or agreed to in writing, software
+/    distributed under the License is distributed on an "AS IS" BASIS,
+/    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/    See the License for the specific language governing permissions and
+/    limitations under the License.
+
+= form_for [project, key, translation, issue], remote: true, html: {class: 'issue-form'} do |f|
+  - if issue.errors.any?
+    .control-group.errors
+      label.control-label Errors:
+      .controls
+        ul
+          - issue.errors.full_messages.each do |msg|
+            li = msg
+  .control-group
+    = f.label :type, class: 'control-label'
+    .controls
+      = f.select :kind, t('models.issue.kind').to_a.map(&:reverse)
+  .control-group
+    = f.label :priority, class: 'control-label'
+    .controls
+      = f.select :priority, t('models.issue.priority').to_a.map(&:reverse).tap{|outer_arr| outer_arr.each {|arr| arr[1] = nil if arr[1] == :none}}
+  .control-group
+    = f.label :summary, class: 'control-label'
+    .controls
+      = f.text_field :summary
+  .control-group
+    = f.label :description, class: 'control-label'
+    .controls
+      = f.text_area :description
+  .control-group
+    = f.label :subscribed_emails, class: 'control-label'
+    .controls
+      - emails = issue.errors.any? ? issue.subscribed_emails : (issue.subscribed_emails + [current_user.email]).uniq
+      = f.text_field :subscribed_emails, value: emails.join(", "), placeholder: "person1@example.com, person2@example.com", class: "issue-subscribed-emails"
+  - unless issue.new_record?
+    .control-group
+      = f.label :status, class: 'control-label'
+      .controls
+        = f.select :status, t('models.issue.status').to_a.map(&:reverse)
+  .control-group
+    .controls
+      = f.submit
+      = button_tag 'Cancel', class: "small default cancel-button"

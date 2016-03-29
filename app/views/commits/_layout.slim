@@ -1,0 +1,84 @@
+/ Copyright 2014 Square Inc.
+/
+/    Licensed under the Apache License, Version 2.0 (the "License");
+/    you may not use this file except in compliance with the License.
+/    You may obtain a copy of the License at
+/
+/        http://www.apache.org/licenses/LICENSE-2.0
+/
+/    Unless required by applicable law or agreed to in writing, software
+/    distributed under the License is distributed on an "AS IS" BASIS,
+/    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/    See the License for the specific language governing permissions and
+/    limitations under the License.
+
+.header
+  - if current_user.monitor?
+    .pull-right
+      - if @format and @commit.ready?
+        button.primary href=manifest_project_commit_url(@project, @commit, @format) Download Manifest
+      - elsif @commit.ready?
+        button.primary.disabled.tooltip-parent[
+          data-tooltip='#missing_format_tooltip'
+          data-tooltip-show='mouseover'
+          data-tooltip-hide='mouseout'
+          data-tooltip-position-at='bottom middle'
+          data-tooltip-position-my='top middle'
+        ]
+          | Missing Format
+        .tooltip#missing_format_tooltip
+          | You must set a default manifest format to use this feature
+      - else
+        button.primary.disabled Translating
+  h1
+    | #{@commit.project.name}
+    strong &nbsp;>&nbsp;
+    | Commit #{@commit.revision_prefix}
+
+  h6
+    strong
+      - if @commit.loading?
+        - if @commit.import_batch_status
+          - current_status = "Loading With #{pluralize_with_delimiter @commit.import_batch_status.pending, 'Job'} Remaining" 
+        - else
+          - current_status = "Hung (Loading, No Import Batch)"
+      - elsif @commit.ready?
+        - current_status = 'Ready'
+      - elsif @commit.import_errors.present?
+        - current_status = 'Errored - Import Aborted'
+      -else
+        - current_status = 'Translating'
+      = "Currently #{current_status}"
+      span.separator &nbsp;/&nbsp;
+      = "Found #{@commit.keys.count} Keys"
+      span.separator &nbsp;/&nbsp;
+      - if @commit.completed_at
+        = "First Completed #{time_ago_in_words(@commit.completed_at)} ago"
+      - elsif @commit.loaded_at
+        = "First Loaded #{time_ago_in_words(@commit.loaded_at)} ago"
+      - else
+        = "First Created #{time_ago_in_words(@commit.created_at)} ago"
+
+  hr.divider
+
+  .row
+    .three.columns.sidebar
+      ul
+        li class=('active' if action_name == 'show')
+          a href=project_commit_path(@project, @commit) Settings
+        li class=('active' if action_name == 'issues')
+          a href=issues_project_commit_path(@project, @commit) = @commit_issues_presenter.issues_label_with_pending_count
+        - if current_user.monitor?
+          li class=('active' if action_name == 'tools')
+            a href=tools_project_commit_path(@project, @commit) Tools
+        li class=('active' if action_name == 'gallery')
+          a href=gallery_project_commit_path(@project, @commit) Gallery
+        li class=('active' if action_name == 'search')
+          a href=search_project_commit_path(@project, @commit) Strings
+
+        li.divider
+
+        = render partial: 'common/progress_tracker', locals: { item: @commit }
+
+    .thirteen.columns.sidebar-main
+      = yield
