@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+source "$HOME/.rvm/scripts/rvm"
+export LC_CTYPE=en_US.UTF-8
+export LANG=en_US.UTF-8
+RUN_LIST=$(echo ${RUN_LIST} | tr "," " ")
+PIDFILE="tmp/elasticsearch.pid"
+
+function install_tidy() {
+  yes | sudo yum install tidy
+  }
+
+function install_libarchive() {
+  curl -O "http://www.libarchive.org/downloads/libarchive-3.1.2.tar.gz"
+    tar -zxf libarchive-3.1.2.tar.gz
+      (cd libarchive-3.1.2 && ./configure && make && sudo make install)
+        for file in /usr/local/lib/libarchive*; do sudo ln -s "$file" "/usr/lib64/${file##*/}"; done
+        }
+
+function install_elasticsearch() {
+  ./script/install.d/elasticsearch
+  }
+
+function start_elasticsearch() {
+  ./script/elasticsearch &
+
+  curl 'localhost:9200'
+    err=$?
+      while [ $err -ne 0 ]
+        do
+            echo 'Waiting for ElasticSearch to start'
+                sleep 1
+                    curl 'localhost:9200'
+                        err=$?
+                          done
+                          }
+
+function stop_elasticsearch() {
+  if [ -f $PIDFILE ]; then
+      kill `cat $PIDFILE`
+          sleep 5
+            fi
+
+  ./script/elasticsearch-cleanup
+  }
+
+function install_bundler_if_needed() {
+  echo "Checking for Bundler ${bundler_version}..."
+    if gem list --installed bundler>/dev/null; then
+        gem update bundler
+          else
+              gem install bundler
+                fi
+                }
+
+function update_gems_if_needed() {
+  echo "Installing gems..."
+    bin/bundle check || bin/bundle install
+    }
+
+function prepare_database() {
+  dropdb -h 127.0.0.1 shuttle_test || true
+    dropuser -h 127.0.0.1 shuttle || true
+      createuser -D -R -S -h 127.0.0.1 shuttle || true
+        createdb -h 127.0.0.1 -O shuttle shuttle_test
+          psql -h 127.0.0.1 -U shuttle -f db/structure.sql shuttle_test
+          }
+
+function run_specs() {
+  bin/bundle exec rspec ${RUN_LIST}
+  }
+
+function run_jasmine() {
+  bin/bundle exec rake guard:jasmine -t
+  }
+
+function prepare() {
+  install_tidy
+    install_elasticsearch
+      install_libarchive
+        install_bundler_if_needed &&
+          update_gems_if_needed &&
+            prepare_database
+            }
+
+prepare
+start_elasticsearch
+
+set -x
+case "${TEST_RUNNER}" in
+  jasmine)
+      run_jasmine
+        ;;
+
+  specs)
+      run_specs
+        ;;
+          *)
+              echo "unknown test runner: ${TEST_RUNNER}"
+                  exit 127
+                    ;;
+                    esac
+
+exit_status=$?
+stop_elasticsearch
+exit $exit_status
